@@ -1,0 +1,62 @@
+#order += "spotify"
+order += "net_rate"
+order += "group disk"
+#order += "disk /"
+#order += "disk /run/media/seike/Vault"
+order += "cpu_usage"
+order += "sysdata"
+order += "lm_sensors"
+order += "clock"
+
+spotify {
+    button_next = 4
+    button_play_pause = 1
+    button_previous = 5
+    format = "{title} by {artist}"
+    format_down = ""
+}
+
+net_rate {
+	format_value = "[\?min_length=10 {value:.1f} {unit}]"
+	si_units = "True"
+	format = "{down}⇣⇡{up}"
+        interfaces_blacklist = "lo"
+}
+
+group disk {
+    click_mode = "button"
+    format = "{output} {button}"
+    format_separator = '|'
+    frame disks {
+        disk "/" {
+	        prefix_type = decimal
+            format = " %avail"
+        }
+        disk "/run/media/seike/Vault" {
+	        prefix_type = decimal
+            format = " %avail"
+        }
+    }
+}
+
+cpu_usage {
+        format = " %usage"
+        on_click 1 = 'exec --no-startup-id notify-send -t 5000 -i applications-development "$(~/.local/bin/scripts/proclist.sh)"'
+}
+
+sysdata {
+    format = '{mem_used}{mem_used_unit}'
+    on_click 1 = 'exec --no-startup-id notify-send -t 5000 -i applications-development "$(~/.local/bin/scripts/memorylist.sh)"'
+}
+
+lm_sensors {
+    chips = ['k10temp*']
+    format_chip = '[\?if=name=k10temp*  ]'
+    format_chip += '{format_sensor}'
+    format_sensor = '{input}°C'
+    sensors = ['Tdie']
+}
+
+clock {
+	format_time = " %d/%m/%y   %H:%M"
+}

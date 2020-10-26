@@ -1,0 +1,268 @@
+# i3 config file (v4)
+
+set $mod Mod4
+# set $ws3 3
+# set $ws2 2
+# set $ws1 1
+# set $ws4 4
+# set $ws5 5
+# set $ws6 6
+# set $ws7 7
+
+set $ws1    "1:  Web"
+set $ws2    "2:  Terminal"
+set $ws3    "3:  Code"
+set $ws4    "4:  Mail"
+set $ws5    "5:  Documents"
+set $ws6    "6:  Media"
+set $ws7    "7:  Games"
+set $ws8    "8:  Chat"
+set $ws9    "9:  General"
+set $ws10   "10:  Settings"
+
+# Variables
+set $bar_height 25
+set $font_family Hack Regular
+set $font_size 11
+set $floating_size 1500 1000
+set $browser firefox
+set $terminal gnome-terminal
+set $filemanager nautilus
+set $email thunderbird
+
+# Font
+font pango:$font_family $font_size
+
+# Workspace assignments
+#exec --no-startup-id i3-msg "workspace $ws1"
+assign [class="(?i)Firefox"]            $ws1
+assign [class="gnome-builder"]                $ws3
+assign [class="Glade"]                  $ws3
+assign [class="(?i)Thunderbird"]        $ws4
+assign [class="libreoffice"]            $ws5
+assign [class="(?i)Lutris"]             $ws7
+assign [class="(?i)Steam"]              $ws7
+assign [class="Hexchat"]                $ws8
+assign [class="Dino"]                   $ws8
+assign [class="Dconf-editor"]           $ws10
+assign [class="Gnome-disks"]            $ws10
+assign [class="GParted"]                $ws10
+assign [class="Grub-customizer"]        $ws10
+assign [class="Hardinfo"]               $ws10
+assign [class="Lxappearance"]           $ws10
+assign [class="Lxinput"]                $ws10
+assign [class="Lxrandr"]                $ws10
+assign [class="Lxtask"]                 $ws10
+
+for_window [class="(?i)Spotify"] move container to workspace $ws6
+
+#Autostart applications
+exec --no-startup-id /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
+exec --no-startup-id nitrogen --restore; sleep1; compton -b
+exec --no-startup-id nextcloud
+exec --no-startup-id pamac-tray
+exec --no-startup-id nm-applet
+exec --no-startup-id volumeicon
+#exec --no-startup-id pulseaudio --start
+#exec --no-startup-id pa-applet
+exec --no-startup-id xautolock -time 10 -locker blurlock
+exec_always --no-startup-id ff-theme-util
+exec_always --no-startup-id fix_xcursor
+
+# Terminal
+bindsym $mod+Shift+Return exec $terminal
+
+# Browser
+bindsym $mod+Shift+w exec $browser
+
+#E-Mail
+bindsym $mod+Shift+m exec $email
+
+# Launcher
+bindsym $mod+space --release exec "rofi -combi-modi drun,window,ssh -show combi -modi combi"
+bindsym $mod+c exec --no-startup-id "rofi -show calc -modi calc -no-show-match -no-sort"
+
+# Explorer
+bindsym $mod+Shift+f exec $filemanager
+
+# Editor
+bindsym $mod+Shift+e exec $terminal -e vim
+
+# Open specific applications in floating mode
+for_window [class="Pamac-manager"]              floating enable
+for_window [class="Manjaro Settings Manager"]   floating enable border normal
+for_window [class="File-roller"]                floating enable
+for_window [class="Galculator"]                 floating enable
+for_window [class="GParted"]                    floating enable border normal
+
+# Change splitting direction
+bindsym $mod+a split toggle
+
+# Fullscreen
+bindsym $mod+f fullscreen toggle
+
+# Floating
+floating_modifier $mod
+bindsym $mod+Shift+space floating toggle
+
+# Sticky
+bindsym $mod+m sticky toggle
+
+# Close window
+bindsym $mod+q kill
+
+#Lock window
+bindsym $mod+l exec --no-startup-id blurlock
+
+# Focus
+bindsym $mod+s focus mode_toggle
+bindsym $mod+Left focus left
+bindsym $mod+Down focus down
+bindsym $mod+Up focus up
+bindsym $mod+Right focus right
+focus_wrapping no
+
+# Move windows
+bindsym $mod+Shift+Left move left
+bindsym $mod+Shift+Down move down
+bindsym $mod+Shift+Up move up
+bindsym $mod+Shift+Right move right
+
+# Switch workspace
+bindsym $mod+1 workspace $ws1, focus tiling
+bindsym $mod+2 workspace $ws2, focus tiling
+bindsym $mod+3 workspace $ws3, focus tiling
+bindsym $mod+4 workspace $ws4, focus tiling
+bindsym $mod+5 workspace $ws5, focus tiling
+bindsym $mod+6 workspace $ws6, focus tiling
+bindsym $mod+7 workspace $ws7, focus tiling
+bindsym $mod+8 workspace $ws8, focus tiling
+bindsym $mod+9 workspace $ws9, focus tiling
+bindsym $mod+0 workspace $ws10, focus tiling
+bindsym --whole-window $mod+button4 workspace prev_on_output, focus tiling
+bindsym --whole-window $mod+button5 workspace next_on_output, focus tiling
+
+# Move windows between workspaces
+bindsym $mod+Shift+1 move to workspace $ws1
+bindsym $mod+Shift+2 move to workspace $ws2
+bindsym $mod+Shift+3 move to workspace $ws3
+bindsym $mod+Shift+4 move to workspace $ws4
+bindsym $mod+Shift+5 move to workspace $ws5
+bindsym $mod+Shift+6 move to workspace $ws6
+bindsym $mod+Shift+7 move to workspace $ws7
+bindsym $mod+Shift+8 move to workspace $ws8
+bindsym $mod+Shift+9 move to workspace $ws9
+bindsym $mod+Shift+0 move to workspace $ws10
+
+# Restart, exit
+bindsym $mod+Shift+r restart
+#bindsym $mod+Shift+e exit
+
+# Set shut down, restart and locking features
+bindsym $mod+Ctrl+Delete mode "$mode_system"
+set $mode_system (e)xit, switch_(u)ser, (h)ibernate, (r)eboot, (s)hutdown
+mode "$mode_system" {
+    bindsym u exec --no-startup-id i3exit switch_user, mode "default"
+    bindsym e exec --no-startup-id i3exit logout, mode "default"
+    bindsym h exec --no-startup-id i3exit hibernate, mode "default"
+    bindsym r exec --no-startup-id i3exit reboot, mode "default"
+    bindsym s exec --no-startup-id i3exit shutdown, mode "default"
+
+    # Exit system mode: "Enter" or "Escapte"
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+
+# Resize window (you can also use the mouse for that)
+bindsym $mod+r mode "resize"
+mode "resize" {
+        bindsym Left resize shrink width 10 px or 10 ppt
+        bindsym Down resize grow height 10 px or 10 ppt
+        bindsym Up resize shrink height 10 px or 10 ppt
+        bindsym Right resize grow width 10 px or 10 ppt
+
+        # exit resize mode: Enter or Escape
+        bindsym Return mode "default"
+        bindsym Escape mode "default"
+}
+
+# Top bar
+bar {
+	i3bar_command i3bar -t
+#	status_command i3blocks
+    status_command py3status -c /home/seike/.config/py3status/config
+#	mode dock
+	position top
+	colors {
+            background          #212121
+            statusline          #dddddd
+            separator           #666666
+            # class             border  backgr. text
+            focused_workspace   #2b83a6 #2b83a6 #ffffff
+            active_workspace    #212121 #212121 #ffffff
+            inactive_workspace  #212121 #212121 #86888c
+            urgent_workspace    #d64e4e #d64e4e #ffffff
+            binding_mode        #229c56 #229c56 #ffffff
+}
+	font pango:$font_family $font_size
+	separator_symbol "  "
+	height $bar_height
+#	tray_output primary
+	binding_mode_indicator yes
+#	strip_workspace_numbers yes
+}
+
+
+bindsym $mod+b bar mode toggle
+
+# Colors                Borders     Background  Text        Indicator   Child border
+client.focused          #2b83a6     #2b83a6     #ffffff     #dddddd     #2b83a6
+client.focused_inactive #212121     #212121     #86888c     #292d2e     #5a5a5a
+client.unfocused        #212121     #212121     #86888c     #292d2e     #5a5a5a
+client.urgent           #d64e4e     #d64e4e     #ffffff     #d64e4e     #d64e4e
+client.placeholder      #212121     #0c0c0c     #ffffff     #212121     #262626
+client.background       #212121
+
+
+# Borders
+default_border pixel 1
+default_floating_border pixel 1
+hide_edge_borders none
+smart_borders on
+smart_gaps on
+
+# Gaps
+gaps inner 10
+gaps outer 0
+bindsym $mod+plus gaps outer current plus 10
+bindsym $mod+minus gaps outer current minus 10
+
+# Screenshot
+bindsym Print exec --no-startup-id ~/Scripts/screenshot_select.sh
+bindsym Shift+Print exec --no-startup-id ~/Scripts/screenshot_save.sh
+
+# Wallpaper
+#exec --no-startup-id ~/.fehbg
+
+# Brightness
+#bindsym XF86MonBrightnessUp exec --no-startup-id ~/Scripts/brightness_up.sh
+#bindsym XF86MonBrightnessDown exec --no-startup-id ~/Scripts/brightness_down.sh
+
+# Audio
+#bindsym XF86AudioRaiseVolume exec --no-startup-id ~/Scripts/volume_up.sh
+#bindsym XF86AudioLowerVolume exec --no-startup-id ~/Scripts/volume_down.sh
+#bindsym XF86AudioMute exec --no-startup-id ~/Scripts/volume_toggle.sh
+
+# Spotify
+bindsym XF86AudioNext exec --no-startup-id playerctl next
+bindsym XF86AudioPrev exec --no-startup-id playerctl previous
+bindsym XF86AudioPlay exec --no-startup-id playerctl play-pause
+
+# Blue light filter
+#exec --no-startup-id redshift -l 53.5511:9.9937
+
+# Spotify song launcher
+#bindsym $mod+g exec --no-startup-id ~/Scripts/spotify_menu.sh
+
+# Welcome
+#exec aplay ~/Music/Sounds/statethybidding.wav
